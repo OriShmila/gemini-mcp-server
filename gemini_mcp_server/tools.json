@@ -1,0 +1,126 @@
+{
+  "name": "Gemini",
+  "tools": [
+    {
+      "name": "gemini_websearch",
+      "description": "Search the web using Gemini with Google Search grounding and return normalized results. Uses Google's grounding to provide factual, up-to-date web search results with proper source attribution. Supports optional language preference and requesting extra per-item fields.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["query"],
+        "additionalProperties": false,
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Search query text."
+          },
+          "language": {
+            "type": "string",
+            "description": "Preferred result language (BCP-47 code, e.g., 'en', 'en-US', 'he')."
+          },
+          "extraFieldsProperties": {
+            "type": "object",
+            "description": "Optional extra properties requested on each result, structured like JSON Schema properties (per key).",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string" },
+                "description": { "type": "string" },
+                "format": { "type": "string" },
+                "enum": { "type": "array", "items": {} },
+                "const": {},
+                "default": {},
+                "examples": { "type": "array", "items": {} },
+                "minimum": { "type": "number" },
+                "maximum": { "type": "number" },
+                "minLength": { "type": "integer", "minimum": 0 },
+                "maxLength": { "type": "integer", "minimum": 0 }
+              },
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["results"],
+        "additionalProperties": false,
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "source",
+                "publisher",
+                "title",
+                "description",
+                "image"
+              ],
+              "properties": {
+                "source": {
+                  "type": "string",
+                  "description": "Canonical source identifier (e.g., URL or domain)."
+                },
+                "publisher": {
+                  "type": ["string", "null"],
+                  "description": "Publisher/organization name if known; null otherwise."
+                },
+                "title": { "type": "string" },
+                "description": { "type": "string" },
+                "image": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Preview image URL if available; may be empty string."
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Direct link to the result."
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "gemini_call",
+      "description": "Call Gemini model directly (without grounding) with a prompt and optional args, constraining the response to a provided JSON Schema. Uses the model's knowledge cutoff without real-time web search or grounding.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["prompt", "outputSchema"],
+        "additionalProperties": false,
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Instruction describing the task and expected output."
+          },
+          "args": {
+            "type": "object",
+            "description": "Arbitrary structured inputs the prompt may reference.",
+            "additionalProperties": true
+          },
+          "outputSchema": {
+            "type": "object",
+            "description": "JSON Schema describing the expected output structure that Gemini should produce.",
+            "additionalProperties": true
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": ["output"],
+        "additionalProperties": false,
+        "properties": {
+          "output": {
+            "description": "Model output that SHOULD validate against the provided input.outputSchema.",
+            "type": ["object", "array", "string", "number", "boolean", "null"]
+          }
+        }
+      }
+    }
+  ]
+}

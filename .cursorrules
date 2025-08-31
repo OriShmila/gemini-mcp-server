@@ -1,0 +1,179 @@
+# Gemini MCP Server - Cursor IDE Rules
+
+## 🎯 Project Overview
+This is a production-ready MCP (Model Context Protocol) server providing Gemini AI capabilities with Google Search grounding and direct model inference.
+
+## 📁 Project Structure
+```
+gemini-mcp-server/
+├── gemini_mcp_server/          # Main package - core implementation
+│   ├── handlers.py            # Tool implementations (Google Search + Direct calls)
+│   ├── server.py              # MCP server core logic
+│   ├── tools.json             # Tool schemas and validation rules
+│   ├── __main__.py            # Package entry point
+│   └── __init__.py            # Package initialization
+├── test_server.py             # Comprehensive test framework
+├── test_cases.json            # Test case definitions
+├── main.py                    # Compatibility wrapper for testing
+├── pyproject.toml             # Dependencies and packaging
+├── README.md                  # Project documentation
+└── .env.example               # Environment variables template
+```
+
+## 🛠️ Key Technologies & Dependencies
+- **MCP Protocol**: Model Context Protocol for AI tool integration
+- **Google Gemini API**: Latest Gemini 2.0 Flash model
+- **Google Search Grounding**: Real-time web search with grounding
+- **JSON Schema**: Strict input/output validation
+- **UV Package Manager**: Fast Python dependency management
+- **Python 3.11+**: Async/await, type hints, modern features
+
+## 🔧 Development Guidelines
+
+### Code Style
+- Use **type hints** for all function parameters and return values
+- Follow **async/await** patterns for all tool functions
+- Use **descriptive variable names** and clear docstrings
+- Keep functions **focused and single-purpose**
+- Include **comprehensive error handling**
+
+### Architecture Patterns
+- **Tool Functions**: All tools are async functions returning Dict[str, Any]
+- **Schema Validation**: Input/output validated against JSON schemas
+- **Error Handling**: Raise ValueError with descriptive messages
+- **Client Management**: Use global client instance for API calls
+- **Configuration**: Environment variables loaded via python-dotenv
+
+### File-Specific Rules
+
+#### `gemini_mcp_server/handlers.py`
+- Contains the two main tools: `gemini_websearch` and `gemini_call`
+- **gemini_websearch**: Uses Google Search grounding for real-time web search
+- **gemini_call**: Direct model inference without grounding
+- All functions must be async and return proper JSON structures
+- Include proper error handling and input validation
+- Use the global `client` instance for API calls
+
+#### `gemini_mcp_server/tools.json`
+- Defines tool schemas using JSON Schema format
+- Each tool must have: name, description, inputSchema, outputSchema
+- Schemas must be valid JSON (never stringify them)
+- Keep descriptions clear and specific about tool capabilities
+
+#### `gemini_mcp_server/server.py`
+- Core MCP server implementation - avoid modifying unless necessary
+- Handles protocol communication and tool routing
+- Uses the TOOL_FUNCTIONS mapping from handlers.py
+
+#### `test_cases.json`
+- Defines test scenarios for both success and failure cases
+- Include realistic test data and expected field validation
+- Cover edge cases and error conditions
+
+### API Integration Guidelines
+
+#### Google Gemini API Usage
+```python
+# Correct pattern for grounded search
+grounding_tool = types.Tool(google_search=types.GoogleSearch())
+config = types.GenerateContentConfig(tools=[grounding_tool])
+response = client.models.generate_content(
+    model="gemini-2.0-flash-exp",
+    contents=prompt,
+    config=config,
+)
+
+# Correct pattern for direct calls (no grounding)
+response = client.models.generate_content(
+    model="gemini-2.0-flash-exp",
+    contents=prompt,
+)
+```
+
+#### Environment Variables
+- Always check for `GEMINI_API_KEY` before making API calls
+- Use python-dotenv for loading environment variables
+- Provide clear error messages for missing configuration
+
+### Testing Requirements
+- All new features must include comprehensive test cases
+- Test both success and failure scenarios
+- Validate input/output schema compliance
+- Include performance monitoring (response times)
+- Run `uv run python test_server.py` before committing
+
+### Performance Optimization
+- Target response times: <6 seconds for grounded search, <1 second for direct calls
+- Use efficient JSON parsing and schema validation
+- Minimize API calls and optimize prompt engineering
+- Monitor memory usage and avoid memory leaks
+
+## 🚨 Critical Rules
+
+### Never Do
+- ❌ Modify the MCP protocol implementation in server.py without deep understanding
+- ❌ Use synchronous functions for tool implementations (always async)
+- ❌ Stringify JSON schemas (always use proper objects)
+- ❌ Hardcode API keys or sensitive data
+- ❌ Break the TOOL_FUNCTIONS mapping structure
+- ❌ Remove comprehensive error handling
+
+### Always Do
+- ✅ Use type hints for all functions
+- ✅ Validate inputs before processing
+- ✅ Return structured responses matching outputSchema
+- ✅ Include descriptive error messages
+- ✅ Test both success and failure cases
+- ✅ Use the global client instance for API calls
+- ✅ Follow async/await patterns consistently
+
+## 🔍 Debugging Guidelines
+
+### Common Issues
+1. **Schema Validation Errors**: Check tools.json against actual function signatures
+2. **API Authentication**: Verify GEMINI_API_KEY is set correctly
+3. **Import Errors**: Ensure all imports use correct package paths
+4. **Async Issues**: All tool functions must be async
+
+### Testing Commands
+```bash
+# Run full test suite
+uv run python test_server.py
+
+# Install/update dependencies
+uv sync
+
+# Check server startup
+uv run python -m gemini_mcp_server
+```
+
+### Logs to Monitor
+- "AFC remote call" indicates successful grounding
+- Schema validation errors show specific field issues
+- API errors include rate limiting and authentication issues
+
+## 📊 Performance Targets
+- **Grounded Search**: <6 seconds per request
+- **Direct Model Calls**: <1 second per request
+- **Schema Validation**: <1ms per request
+- **Memory Usage**: <100MB total
+- **Test Suite**: 100% pass rate
+
+## 🎯 Quality Standards
+- All functions must have comprehensive docstrings
+- Type hints required for all parameters and return values
+- Error handling must be explicit and informative
+- Test coverage should include both positive and negative cases
+- Code should be self-documenting and maintainable
+
+## 🔄 Development Workflow
+1. **Plan**: Review requirements and existing architecture
+2. **Implement**: Follow patterns established in existing code
+3. **Test**: Write comprehensive test cases
+4. **Validate**: Run full test suite
+5. **Document**: Update docstrings and README if needed
+6. **Review**: Ensure code follows all guidelines
+
+---
+
+*These rules ensure consistent, maintainable, and high-quality code for the Gemini MCP Server project.*

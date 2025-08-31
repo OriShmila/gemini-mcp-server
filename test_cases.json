@@ -1,0 +1,175 @@
+{
+  "test_cases": [
+    {
+      "name": "gemini_websearch_basic",
+      "tool": "gemini_websearch",
+      "arguments": {
+        "query": "python programming tutorial"
+      },
+      "description": "Basic web search for Python programming tutorials",
+      "expected_fields": ["results"],
+      "should_succeed": true
+    },
+    {
+      "name": "gemini_websearch_with_language",
+      "tool": "gemini_websearch",
+      "arguments": {
+        "query": "machine learning",
+        "language": "en"
+      },
+      "description": "Web search with language preference",
+      "expected_fields": ["results"],
+      "should_succeed": true
+    },
+    {
+      "name": "gemini_websearch_with_extra_fields",
+      "tool": "gemini_websearch",
+      "arguments": {
+        "query": "artificial intelligence",
+        "extraFieldsProperties": {
+          "relevance_score": {
+            "type": "number",
+            "description": "Relevance score of the result"
+          }
+        }
+      },
+      "description": "Web search with extra field properties",
+      "expected_fields": ["results"],
+      "should_succeed": true
+    },
+    {
+      "name": "gemini_websearch_empty_query",
+      "tool": "gemini_websearch",
+      "arguments": {
+        "query": ""
+      },
+      "description": "Test with empty query string",
+      "expected_fields": [],
+      "should_succeed": false
+    },
+    {
+      "name": "gemini_call_simple",
+      "tool": "gemini_call",
+      "arguments": {
+        "prompt": "Generate a simple greeting message",
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": ["message"]
+        }
+      },
+      "description": "Simple Gemini call with basic output schema",
+      "expected_fields": ["output"],
+      "should_succeed": true
+    },
+    {
+      "name": "gemini_call_with_args",
+      "tool": "gemini_call",
+      "arguments": {
+        "prompt": "Create a personalized greeting for the given user",
+        "args": {
+          "name": "Alice",
+          "language": "English"
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "greeting": {
+              "type": "string"
+            },
+            "language": {
+              "type": "string"
+            }
+          },
+          "required": ["greeting", "language"]
+        }
+      },
+      "description": "Gemini call with input arguments and structured output",
+      "expected_fields": ["output"],
+      "should_succeed": true
+    },
+    {
+      "name": "gemini_call_complex_schema",
+      "tool": "gemini_call",
+      "arguments": {
+        "prompt": "Analyze the given text and extract key information",
+        "args": {
+          "text": "The company reported revenue of $1.2 billion in Q3 2024, representing a 15% increase from the previous quarter."
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "revenue": {
+              "type": "object",
+              "properties": {
+                "amount": { "type": "number" },
+                "currency": { "type": "string" },
+                "period": { "type": "string" }
+              }
+            },
+            "growth_rate": {
+              "type": "number"
+            },
+            "analysis": {
+              "type": "string"
+            }
+          },
+          "required": ["revenue", "growth_rate"]
+        }
+      },
+      "description": "Gemini call with complex nested output schema",
+      "expected_fields": ["output"],
+      "should_succeed": true
+    },
+    {
+      "name": "gemini_call_empty_prompt",
+      "tool": "gemini_call",
+      "arguments": {
+        "prompt": "",
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "message": { "type": "string" }
+          }
+        }
+      },
+      "description": "Test with empty prompt",
+      "expected_fields": [],
+      "should_succeed": false
+    },
+    {
+      "name": "gemini_call_missing_output_schema",
+      "tool": "gemini_call",
+      "arguments": {
+        "prompt": "Generate a message"
+      },
+      "description": "Test with missing output schema",
+      "expected_fields": [],
+      "should_succeed": false
+    },
+    {
+      "name": "gemini_call_array_output",
+      "tool": "gemini_call",
+      "arguments": {
+        "prompt": "Generate a list of 3 colors",
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "colors": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          "required": ["colors"]
+        }
+      },
+      "description": "Gemini call expecting array output",
+      "expected_fields": ["output"],
+      "should_succeed": true
+    }
+  ]
+}
