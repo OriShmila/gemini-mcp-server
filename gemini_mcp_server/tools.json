@@ -17,27 +17,6 @@
           "language": {
             "type": "string",
             "description": "Preferred result language (BCP-47 code, e.g., 'en', 'en-US', 'he')."
-          },
-          "extraFieldsProperties": {
-            "type": "object",
-            "description": "Optional extra properties requested on each result, structured like JSON Schema properties (per key).",
-            "additionalProperties": {
-              "type": "object",
-              "properties": {
-                "type": { "type": "string" },
-                "description": { "type": "string" },
-                "format": { "type": "string" },
-                "enum": { "type": "array", "items": {} },
-                "const": {},
-                "default": {},
-                "examples": { "type": "array", "items": {} },
-                "minimum": { "type": "number" },
-                "maximum": { "type": "number" },
-                "minLength": { "type": "integer", "minimum": 0 },
-                "maxLength": { "type": "integer", "minimum": 0 }
-              },
-              "additionalProperties": true
-            }
           }
         }
       },
@@ -50,13 +29,7 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": [
-                "source",
-                "publisher",
-                "title",
-                "description",
-                "image"
-              ],
+              "required": ["source", "publisher", "title", "content", "image"],
               "properties": {
                 "source": {
                   "type": "string",
@@ -67,7 +40,7 @@
                   "description": "Publisher/organization name if known; null otherwise."
                 },
                 "title": { "type": "string" },
-                "description": { "type": "string" },
+                "content": { "type": "string" },
                 "image": {
                   "type": "string",
                   "format": "uri",
@@ -78,8 +51,7 @@
                   "format": "uri",
                   "description": "Direct link to the result."
                 }
-              },
-              "additionalProperties": true
+              }
             }
           }
         }

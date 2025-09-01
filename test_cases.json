@@ -4,9 +4,9 @@
       "name": "gemini_websearch_basic",
       "tool": "gemini_websearch",
       "arguments": {
-        "query": "python programming tutorial"
+        "query": "Lisbon Portugal top attractions landmarks Belém Tower Jerónimos Monastery São Jorge Castle opening hours prices 2024 2025"
       },
-      "description": "Basic web search for Python programming tutorials",
+      "description": "Basic web search for lisbon",
       "expected_fields": ["results"],
       "should_succeed": true
     },
@@ -18,22 +18,6 @@
         "language": "en"
       },
       "description": "Web search with language preference",
-      "expected_fields": ["results"],
-      "should_succeed": true
-    },
-    {
-      "name": "gemini_websearch_with_extra_fields",
-      "tool": "gemini_websearch",
-      "arguments": {
-        "query": "artificial intelligence",
-        "extraFieldsProperties": {
-          "relevance_score": {
-            "type": "number",
-            "description": "Relevance score of the result"
-          }
-        }
-      },
-      "description": "Web search with extra field properties",
       "expected_fields": ["results"],
       "should_succeed": true
     },
